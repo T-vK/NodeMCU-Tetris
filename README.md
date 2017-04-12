@@ -18,7 +18,52 @@ This project is not fully finished yet. Game controls are not implements yet.
 
 ```
 ws2812.init()
-local aledMatrixInstance = newLedMatrix(10, 10, true, true, true, true, true)
-local tetrisBoardInstance = newTetrisBoard(aledMatrixInstance,60)
-tetrisBoardInstance:start()
+local ledMatrix = newLedMatrix(13, 13, true, true, false, true, true)
+local tetris = newTetrisBoard(ledMatrix,60)
+tetris:start()
 ```
+
+## User Controls
+
+You can decide on your own what kind of controller you would like to use.  
+Be it a web interface, a thumb stick or simple buttons.  
+
+## Controls API
+
+- To move the current shape to the left/right by one pixel
+
+     ```
+         tetris:action("left")
+         -- or
+         tetris:action("right")
+     ```
+- To move the current shape down by one pixel
+
+     ```
+         tetris:action("down")
+     ```
+     Please note: The shape drops down automatically every 500 milliseconds.  
+     You should only call `tetris:action("down")` i you want to speed things up.
+     
+- To rotate a shape clockwise by 90°:
+
+     ```
+         tetris:action("rotateRight")
+     ```
+     
+- To rotate a shape counter-clockwise by 90°:
+
+     ```
+         tetris:action("rotateLeft")
+     ```
+     
+- To start the game:
+
+     ```
+         tetris:start()
+     ```
+- To pause the game:
+
+     ```
+         tetris:stop()
+     ```
