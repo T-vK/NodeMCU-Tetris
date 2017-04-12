@@ -28,6 +28,11 @@ function newTetrisBoard(ledMatrixInstance,fps)
                         x = x + math.floor(this.ledMatrix.width/2)
                         this.currentShape.coords[i][1] = x
                     end
+                    this:action("down")
+                    if this.currentShape == nil then
+                        this:reset()
+                        this:start()
+                    end
                 else
                     this:action("down")
                 end
@@ -64,6 +69,9 @@ function newTetrisBoard(ledMatrixInstance,fps)
             end
         end;
         action = function(this,action)
+            if this.currentShape == nil then
+                return
+            end
             for i = 1, #this.currentShape.coords do -- unset (old) shape pixels; set potentially new coords
                 local x = this.currentShape.coords[i][1]
                 local y = this.currentShape.coords[i][2]
@@ -77,11 +85,11 @@ function newTetrisBoard(ledMatrixInstance,fps)
                 elseif action == "up" then
                     y = y-1
                 elseif action == "rotateLeft" then
-                    this.currentShape.rotateLeft()
+                    this.currentShape:rotateLeft()
                     x = this.currentShape.coords[i][1]
                     y = this.currentShape.coords[i][2]
                 elseif action == "rotateRight" then
-                    this.currentShape.rotateRight()
+                    this.currentShape:rotateRight()
                     x = this.currentShape.coords[i][1]
                     y = this.currentShape.coords[i][2]
                 end
@@ -120,11 +128,11 @@ function newTetrisBoard(ledMatrixInstance,fps)
                     elseif action == "up" then
                         y = y+1
                     elseif action == "rotateLeft" then
-                        this.currentShape.rotateRight()
+                        this.currentShape:rotateRight()
                         x = this.currentShape.coords[i][1]
                         y = this.currentShape.coords[i][2]
                     elseif action == "rotateRight" then
-                        this.currentShape.rotateLeft()
+                        this.currentShape:rotateLeft()
                         x = this.currentShape.coords[i][1]
                         y = this.currentShape.coords[i][2]
                     end
@@ -133,7 +141,7 @@ function newTetrisBoard(ledMatrixInstance,fps)
                 end
                 
                 this.ledMatrix:set(x,y,red,green,blue)
-                print("x: " .. x .. " y: " .. y .. " red: " .. red .. " green: " .. green .. " blue: " .. blue)
+                --print("x: " .. x .. " y: " .. y .. " red: " .. red .. " green: " .. green .. " blue: " .. blue)
             end
             
             if wouldCollide and action == "down" then
@@ -143,9 +151,12 @@ function newTetrisBoard(ledMatrixInstance,fps)
         end;
         reset = function(this)
             this.currentShape = nil
+            this.score = 0
             this.frameTimer:unregister()
             this.dropTimer:unregister()
-            this.ledMatrix.ledBuffer:fill(0,0,0)
+            this.frameTimer = tmr.create()
+            --this.ledMatrix.ledBuffer:fade(2)
+            this.ledMatrix.ledBuffer:fill(255,0,0)
             this.ledMatrix:show()
         end;
     }
@@ -199,7 +210,7 @@ function newTetrisShape(type)
     return {
         coords = SHAPES[type];
         color = COLORS[type];
-        rotateR = function(this)
+        rotateRight = function(this)
             -- 90° clockwise rotation: (x|y) =>  (-y|x)
             for i = 1, #this.coords do
                 local x = this.coords[i][1]
@@ -208,7 +219,7 @@ function newTetrisShape(type)
                 this.coords[i][2] = x
             end
         end;
-        rotateL = function(this)
+        rotateLeft = function(this)
             -- 90° counter-clockwise rotation: (x|y) => (y|-x)
             for i = 1, #this.coords do
                 local x = this.coords[i][1]
