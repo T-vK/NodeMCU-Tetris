@@ -48,7 +48,7 @@ function newTetris(ledMatrixInstance,fps)
             this.dropTimer:stop()
         end;
         lineCheck = function(this)
-            for y = this.ledMatrix.height, 1, -1 do -- check rows starting from bottom TODO: check if syntax correct
+            for y = this.ledMatrix.height, 1, -1 do -- check rows starting from bottom 
                 local rowMissingBlocks = false
                 for x = 1, this.ledMatrix.width do
                     local red,green,blue = this.ledMatrix:get(x,y)
